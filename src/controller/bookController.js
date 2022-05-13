@@ -154,14 +154,14 @@ const getBooksById = async function (req, res) {
         if (!isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, msg: "Please provide a Valid bookId" })
         }
-        const bookDetails = await bookModel.findOne({ _id: bookId, isDeleted: false});
+        const bookDetails = await bookModel.findOne({ _id: bookId, isDeleted: false, });
         //If no Books found in bookModel
         if (!bookDetails) {
             return res.status(404).send({ status: true, msg: "No books found." });
         }
 
         const reviews = await reviewModel.find({ bookId: bookId, isDeleted: false }); //finding the bookId in review Model
-        const finalBookDetails = {bookDetails, reviewsData: reviews }; //Storing data into new Object
+        const finalBookDetails = {bookDetails, reviewsData: reviews, }; //Storing data into new Object
         return res.status(200).send({ status: true, msg: "Books list.", data: finalBookDetails });
 
     } catch (err) {
@@ -188,7 +188,7 @@ const updateBooks = async function (req, res) {
         //by auth.js(decodede token userId)
         let userId = req.userId
         if (book.userId != userId) {
-            return res.status(403).send({ status: false, message: "Unauthorized access.", });
+            return res.status(403).send({ status: false, message: "Unauthorized access." });
         }
 
         // check the date is provide to update
@@ -217,7 +217,7 @@ const updateBooks = async function (req, res) {
 
         // match ISBN with regex
         if (!num.test(isbn)) {
-            return res.status(400).send({ status: false, message: "please provide valid ISBN " })
+            return res.status(400).send({ status: false, message: "please provide " })
         }
         let usedIsbn = await bookModel.findOne({ ISBN: isbn })
         if (usedIsbn) {
@@ -233,7 +233,7 @@ const updateBooks = async function (req, res) {
         return res.status(200).send({ status: true, msg: "updated successfully", data: updateBook })
     }
     catch (err) {
-        return res.status(500).send({ msg: err.message });
+        return res.status(500).send({ error: err.message });
     }
 }
 

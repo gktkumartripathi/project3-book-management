@@ -13,7 +13,7 @@ const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
 
-
+// ================================createapi======================
 const createUser = async function (req, res) {
     try {
         let userBody = req.body
@@ -109,6 +109,7 @@ const createUser = async function (req, res) {
     }
 }
 
+// ====================================login user============================
 
 const login = async function (req, res) {
 
