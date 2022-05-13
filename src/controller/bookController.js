@@ -24,7 +24,7 @@ const isValidObjectId = function (objectId) {
 const createBook = async function (req, res) {
     try {
         const requestBody = req.body;
-        
+
         //if body is empty
         if (!isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid in request body' })
@@ -261,6 +261,7 @@ const deleteBookId = async function (req, res) {
         }
         // set the isDeleted true of that book with deleted date
         await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: new Date() } })
+        await reviewModel.findOneAndUpdate({bookId:bookId},{$set:{isDeleted:true}})
         return res.status(200).send({ status: true, message: `Success` })
     }
     catch (error) {
