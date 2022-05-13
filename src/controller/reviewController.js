@@ -46,7 +46,7 @@ const reviewCreate = async function (req, res) {
 
         // if reviwedBy name is present than match with regex
         if (reviewedBy && !(/^[a-zA-Z]+(\s[a-zA-Z]+)?$/).test(reviewedBy)) {
-            return res.status(400).send({ status: false, messaage: "please enter the name in righ" })
+            return res.status(400).send({ status: false, messaage: "please enter the  right format" })
         }
 
         // check that review is provided
@@ -134,12 +134,12 @@ const deleteReviewById = async function (req, res) {
 
         // check bookId is a valid ObjectId
         if (!isValidObjectId(bookId)) {
-            return res.status(400).send({ status: false, msg: 'is not a valid book Id' })
+            return res.status(400).send({ status: false, msg: 'bookId is not a valid object Id' })
         }
 
         // check reviewId is a valid ObjectId
         if (!isValidObjectId(reviewId)) {
-            return res.status(400).send({ status: false, msg: 'is not a valid review Id' })
+            return res.status(400).send({ status: false, msg: 'reviewId is not a valid object Id' })
         }
 
         // find the book with book and check that is not deleted

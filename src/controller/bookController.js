@@ -217,7 +217,7 @@ const updateBooks = async function (req, res) {
 
         // match ISBN with regex
         if (!num.test(isbn)) {
-            return res.status(400).send({ status: false, message: "please provide " })
+            return res.status(400).send({ status: false, message: "please provide ISBN in format XXX-XXXXXXXXXX" })
         }
         let usedIsbn = await bookModel.findOne({ ISBN: isbn })
         if (usedIsbn) {
@@ -263,7 +263,7 @@ const deleteBookId = async function (req, res) {
         }
         // set the isDeleted true of that book with deleted date
         await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: new Date() } })
-        await reviewModel.findOneAndUpdate({bookId:bookId},{$set:{isDeleted:true}})
+        await reviewModel.findByIdAndUpdate({bookId:bookId},{$set:{isDeleted:true}})
         return res.status(200).send({ status: true, message: `Success` })
     }
     catch (error) {

@@ -110,7 +110,6 @@ const createUser = async function (req, res) {
 }
 
 // ====================================login user============================
-
 const login = async function (req, res) {
 
     try {
