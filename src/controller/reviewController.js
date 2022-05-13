@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 const reviewModel = require('../models/reviewModel')
 const bookModel = require('../models/bookModel')
+
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
-    //if (typeof value === 'number') return false
     return true;
 }
 const isValidRequestBody = function (requestBody) {
@@ -61,7 +61,7 @@ const reviewCreate = async function (req, res) {
         let reviews = await reviewModel.create(data)
         // increase the reviews count in same book
         let updateBook = await bookModel.findOneAndUpdate({ _id: Id }, { $inc: { reviews: +1 } }, { new: true })
-        return res.status(201).send({ status: true, message: "success", data: reviews, updatedBook: updateBook })
+        return res.status(201).send({ status: true, message: "success", data: reviews })
     }
     catch (err) {
         return res.send({ error: err.message })

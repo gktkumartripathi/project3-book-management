@@ -4,15 +4,13 @@ const bookModel = require('../models/bookModel')
 const reviewModel = require('../models/reviewModel')
 
 const regex = /^[a-zA-Z\s]*(?:[A-Za-z]+)*(?:[A-Za-z0-9]+)$/;
-const num = /^\d{13}$/
+const num = /^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/;
 
 const isValid = function (value) {
     if (typeof value === 'undefined' || value === null) return false
     if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 }
-//========================================createBook Api==============================================
-
 const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
 }
@@ -20,6 +18,9 @@ const isValidRequestBody = function (requestBody) {
 const isValidObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
 }
+//========================================createBook Api==============================================
+
+
 
 const createBook = async function (req, res) {
     try {
@@ -153,14 +154,14 @@ const getBooksById = async function (req, res) {
         if (!isValidObjectId(bookId)) {
             return res.status(400).send({ status: false, msg: "Please provide a Valid bookId" })
         }
-        const bookDetails = await bookModel.findOne({ _id: bookId, isDeleted: false, });
+        const bookDetails = await bookModel.findOne({ _id: bookId, isDeleted: false});
         //If no Books found in bookModel
         if (!bookDetails) {
             return res.status(404).send({ status: true, msg: "No books found." });
         }
 
         const reviews = await reviewModel.find({ bookId: bookId, isDeleted: false }); //finding the bookId in review Model
-        const finalBookDetails = { ...bookDetails._doc, reviewsData: reviews, }; //Storing data into new Object
+        const finalBookDetails = {bookDetails, reviewsData: reviews }; //Storing data into new Object
         return res.status(200).send({ status: true, msg: "Books list.", data: finalBookDetails });
 
     } catch (err) {
@@ -174,6 +175,7 @@ const updateBooks = async function (req, res) {
     try {
         let data = req.body;
         let Id = req.params.bookId
+        let isbn = data.ISBN
         // check that is a valid ObjectId
         if (!isValidObjectId(Id)) {
             return res.status(400).send({ status: false, msg: "Please enter a valid type of objectId" })
@@ -195,7 +197,7 @@ const updateBooks = async function (req, res) {
         }
 
         // check if the filter if provided to update
-        if (!(data.title || data.ISBN || data.excerpt || data.releaseDate)) {
+        if (!(data.title || isbn || data.excerpt || data.releaseDate)) {
             return res.status(400).send({ status: false, message: 'please provide some details to update' })
         }
 
@@ -209,15 +211,15 @@ const updateBooks = async function (req, res) {
         }
 
         //ISBN is present and valid
-        if (data.ISBN && !isValid(data.ISBN)) {
+        if (isbn && !isValid(isbn)) {
             return res.status(400).send({ status: false, message: 'please provide the ISBN' })
         }
 
         // match ISBN with regex
-        if (!num.test(ISBN)) {
-            return res.status(400).send({ status: false, message: "please provide " })
+        if (!num.test(isbn)) {
+            return res.status(400).send({ status: false, message: "please provide valid ISBN " })
         }
-        let usedIsbn = await bookModel.findOne({ ISBN: data.ISBN })
+        let usedIsbn = await bookModel.findOne({ ISBN: isbn })
         if (usedIsbn) {
             return res.status(400).send({ status: false, msg: "Book with this ISBN is already present " })
         }
@@ -227,7 +229,7 @@ const updateBooks = async function (req, res) {
             return res.status(400).send({ status: false, message: 'please provide the excerpt' })
         }
         //  update the book 
-        let updateBook = await bookModel.findByIdAndUpdate({ _id: Id }, { title: data.title, excerpt: data.excerpt, releaseDate: data.releaseDate, ISBN: data.ISBN }, { new: true })
+        let updateBook = await bookModel.findByIdAndUpdate({ _id: Id }, { title: data.title, excerpt: data.excerpt, releaseDate: data.releaseDate, ISBN: isbn }, { new: true })
         return res.status(200).send({ status: true, msg: "updated successfully", data: updateBook })
     }
     catch (err) {
