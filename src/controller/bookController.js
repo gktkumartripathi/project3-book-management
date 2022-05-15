@@ -83,7 +83,7 @@ const createBook = async function (req, res) {
         }
 
         //subcategory is empty or not match with regex
-        if (!isValid(subcategory) || !(/^[a-zA-Z]+(\s[a-zA-Z]+)?$/).test(subcategory)) {
+        if (!isValid(subcategory)) {
             return res.status(400).send({ status: false, message: 'Subcategory is required' })
         }
 
