@@ -46,12 +46,15 @@ const reviewCreate = async function (req, res) {
 
         // if reviwedBy name is present than match with regex
         if (reviewedBy && !(/^[a-zA-Z]+(\s[a-zA-Z]+)?$/).test(reviewedBy)) {
-            return res.status(400).send({ status: false, messaage: "please enter the  right format" })
+            return res.status(400).send({ status: false, messaage: "please enter the reviewedBy in right format" })
         }
 
         // check that review is provided
         if (review && !isValid(review)) {
             return res.status(400).send({ status: false, message: "Please enter the review" })
+        }
+        if(!rating){
+            return res.status(400).send({status:false, msg:'please provide rating'})
         }
         if ((rating < 1 || rating > 5)) {
             return res.status(400).send({ status: false, message: "Rating should be in range of number 1 to 5" })
@@ -82,11 +85,12 @@ const updateReview = async function (req, res) {
         if (!isValidObjectId(reviewId)) {
             return res.status(400).send({ status: false, messaage: "Pleage provide valid reviewId" })
         }
-        const existreviewId = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
+        const existreviewId = await reviewModel.findOne({ _id: reviewId, bookId:Id ,isDeleted: false })
         if (!existreviewId) {
-            return res.status(400).send({ status: false, messaage: "review not found" })
+            return res.status(400).send({ status: false, messaage: " review  not found " })
         }
-
+         
+        
         // check bookId is a valid ObjectId
         if (!isValidObjectId(Id)) {
             return res.status(400).send({ status: false, messaage: "Pleage provide valid bookId" })
@@ -149,7 +153,7 @@ const deleteReviewById = async function (req, res) {
         }
 
         // find the book with book and check that is not deleted
-        const review = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
+        const review = await reviewModel.findOne({ _id: reviewId, bookId:bookId, isDeleted: false })
         if (!review) {
             return res.status(400).send({ status: false, msg: 'review does not exist for given bookId' })
         }
