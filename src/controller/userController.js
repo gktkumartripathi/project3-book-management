@@ -118,7 +118,7 @@ const login = async function (req, res) {
         if (!isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters,Please provide login details' })
         }
-        // Extract keys from param
+        // Extract keys from body
         const { email, password } = requestBody;
 
         // email Validation 

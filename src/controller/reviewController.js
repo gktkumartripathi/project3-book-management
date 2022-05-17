@@ -67,7 +67,7 @@ const reviewCreate = async function (req, res) {
         return res.status(201).send({ status: true, message: "success", data: reviews})
     }
     catch (err) {
-        return res.send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 }
 
@@ -93,7 +93,7 @@ const updateReview = async function (req, res) {
         
         // check bookId is a valid ObjectId
         if (!isValidObjectId(Id)) {
-            return res.status(400).send({ status: false, messaage: "Pleage provide valid bookId" })
+            return res.status(400).send({ status: false, messaage: "Please provide valid bookId" })
         }
         const existBookId = await bookModel.findOne({ _id: Id, isDeleted: false })
         if (!existBookId) {
@@ -102,7 +102,7 @@ const updateReview = async function (req, res) {
 
         // check the data is provided to update the review
         if (!isValidRequestBody(data)) {
-            return res.status(400).send({ status: false, messaage: "Pleage provide review details to update review " })
+            return res.status(400).send({ status: false, messaage: "Please provide review details to update review " })
         }
 
         // reviewedBy is present or match with regex
@@ -125,7 +125,7 @@ const updateReview = async function (req, res) {
         return res.status(200).send({ status: true, message: "review update succesfully", data: updateReview })
 
     } catch (err) {
-        return res.send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 }
 
@@ -149,13 +149,13 @@ const deleteReviewById = async function (req, res) {
         // find the book with book and check that is not deleted
         const book = await bookModel.findOne({ _id: bookId, isDeleted: false })
         if (!book) {
-            return res.status(400).send({ status: false, msg: 'book does not found' })
+            return res.status(404).send({ status: false, msg: 'book does not found' })
         }
 
         // find the book with book and check that is not deleted
         const review = await reviewModel.findOne({ _id: reviewId, bookId:bookId, isDeleted: false })
         if (!review) {
-            return res.status(400).send({ status: false, msg: 'review does not exist for given bookId' })
+            return res.status(404).send({ status: false, msg: 'review does not exist for given bookId' })
         }
 
         // set the isDeleted property of review to true 
@@ -165,7 +165,7 @@ const deleteReviewById = async function (req, res) {
         return res.status(200).send({ status: true, msg: 'review deleted successfully' })
 
     } catch (err) {
-        return res.send({ error: err.message })
+        return res.status(500).send({ error: err.message })
     }
 
 }

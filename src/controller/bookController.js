@@ -157,7 +157,7 @@ const getBooksById = async function (req, res) {
         const bookDetails = await bookModel.findOne({ _id: bookId, isDeleted: false, });
         //If no Books found in bookModel
         if (!bookDetails) {
-            return res.status(404).send({ status: true, msg: "No books found." });
+            return res.status(404).send({ status: false, msg: "No books found." });
         }
 
         const reviews = await reviewModel.find({ bookId: bookId, isDeleted: false }); //finding the bookId in review Model
@@ -263,7 +263,7 @@ const deleteBookId = async function (req, res) {
         }
         // set the isDeleted true of that book with deleted date
         await bookModel.findOneAndUpdate({ _id: bookId }, { $set: { isDeleted: true, deletedAt: new Date() } })
-        await reviewModel.findByIdAndUpdate({bookId:bookId},{$set:{isDeleted:true}})
+        await reviewModel.updateMany({bookId:bookId},{$set:{isDeleted:true}})
         return res.status(200).send({ status: true, message: `Success` })
     }
     catch (error) {
